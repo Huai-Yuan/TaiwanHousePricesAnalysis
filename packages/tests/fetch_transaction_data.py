@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.common.by import By
 from selenium.webdriver.support.select import Select
 
-class fetch_data:
+class fetch_transaction_data:
     def __init__(self, data_path):
         self.data_path = data_path
         self.url = "https://plvr.land.moi.gov.tw/DownloadOpenData"
