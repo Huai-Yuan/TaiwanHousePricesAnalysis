@@ -55,3 +55,9 @@ class fetch_transaction_data:
 
     def quit(self):
         self.driver.quit()
+
+    def get_transaction(self):
+        self.setup()
+        self.get_url()
+        self.fetch_data()
+        self.quit()
