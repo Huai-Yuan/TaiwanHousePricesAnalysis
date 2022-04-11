@@ -1,7 +1,6 @@
 ## folder
-bin/data/
-bin/downloads/
-bin/metro_info/
+data/
 
 ## Executable File
-bin/chromedriver.exe
+packages/chromedriver.exe
+packages/tests/chromedriver.exe
