@@ -1,0 +1,7 @@
+## folder
+bin/data/
+bin/downloads/
+bin/metro_info/
+
+## Executable File
+bin/chromedriver.exe
