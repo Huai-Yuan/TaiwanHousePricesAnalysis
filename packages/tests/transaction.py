@@ -1,5 +1,7 @@
 import os
 import zipfile
+import numpy as np
+import pandas as pd
 from time import sleep
 from selenium import webdriver
 from selenium.webdriver.common.by import By
@@ -61,3 +63,21 @@ class fetch_transaction_data:
         self.get_url()
         self.fetch_data()
         self.quit()
+
+def process_raw_data(df: pd.core.frame.DataFrame):
+    # delet column name in english
+    df.drop([0], inplace=True)
+    # 去除非住家用房屋交易資料
+    df = df[(df['交易標的'] == "房地(土地+建物)+車位") | (df['交易標的'] == "房地(土地+建物)")]
+    df = df[df["主要用途"] == "住家用"]
+    # 計算主建物實坪單價 並加入dataframe
+    df['主建物面積'] = df['主建物面積'].astype(np.int64)
+    df = df[df['主建物面積'] != 0]
+    tatal_prices = df['總價元'].astype(np.int64) - df['車位總價元'].astype(np.int64)
+    df['主建物實坪單價'] =  tatal_prices/ (df['主建物面積']/3.30579)
+    # 去除不重要 column
+    df.drop(['交易標的', '鄉鎮市區', '土地移轉總面積平方公尺', '非都市土地使用分區', '非都市土地使用編定',
+             '主要用途', '主要建材', '建物移轉總面積平方公尺', '建物現況格局-隔間', '總價元', 
+             '單價元平方公尺', '交易筆棟數', '備註', '編號', '附屬建物面積', '陽台面積', '移轉編號',
+             '車位類別', '車位總價元', '車位移轉總面積(平方公尺)'], axis=1, inplace=True)
+    return df
