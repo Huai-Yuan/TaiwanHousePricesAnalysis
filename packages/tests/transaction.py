@@ -64,7 +64,7 @@ class fetch_transaction_data:
         self.fetch_data()
         self.quit()
 
-def process_raw_data(df: pd.core.frame.DataFrame):
+def process_data(df: pd.core.frame.DataFrame):
     # delet column name in english
     df.drop([0], inplace=True)
     # 去除非住家用房屋交易資料
