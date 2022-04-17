@@ -65,11 +65,36 @@ class fetch_transaction_data:
         self.fetch_data()
         self.quit()
 
-def process_data(df: pd.core.frame.DataFrame):
+def parse_address(df: pd.core.frame.DataFrame):
+    division = pd.read_csv("./conf/administrative_division/administrative_division.csv")
+    cities = []
+    loactions = []
+    IDs = []
+    for address in df["土地位置建物門牌"]:
+        city = address[:3]
+        cities.append(city)
+
+        if city[-1] == "市":
+            pattern = re.compile(r"\w+[區]")
+            loaction = pattern.search(address[3:7]).group(0)
+            loactions.append(loaction)
+        else:
+            pattern = re.compile(r"\w+[市鎮鄉]")
+            loaction = pattern.search(address[3:7]).group(0)
+            loactions.append(loaction)
+
+        IDs.append(division[(division.iloc[:, 1] == city) & (division.iloc[:, 3] == loaction)].ID.values[0])
+    df["縣市"] = cities
+    df["區市鎮鄉"] = loactions
+    df["區域ID"] = IDs
+    return df
+
+def process_data(path: str):
+    df = pd.read_csv(path)
     # delet column name in english
     df.drop([0], inplace=True)
     # 去除非住家用房屋交易資料
-    df = df[(df['交易標的'] == "房地(土地+建物)+車位") | (df['交易標的'] == "房地(土地+建物)")]
+    df = df[(df["交易標的"] == "房地(土地+建物)+車位") | (df['交易標的'] == "房地(土地+建物)")]
     df = df[df["主要用途"] == "住家用"]
     # 計算主建物實坪單價 並加入dataframe
     df['主建物面積'] = df['主建物面積'].astype(np.int64)
@@ -81,4 +106,5 @@ def process_data(df: pd.core.frame.DataFrame):
              '主要用途', '主要建材', '建物移轉總面積平方公尺', '建物現況格局-隔間', '總價元', 
              '單價元平方公尺', '交易筆棟數', '備註', '編號', '附屬建物面積', '陽台面積', '移轉編號',
              '車位類別', '車位總價元', '車位移轉總面積(平方公尺)'], axis=1, inplace=True)
+    df = parse_address(df)
     return df
