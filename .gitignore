@@ -1,6 +1,7 @@
 ## folder
 data/
-packages/tests/__pycache__
+test_packages/__pycache__
+packages/__pycache__
 ## Executable File
 packages/chromedriver.exe
-packages/tests/chromedriver.exe
+chromedriver.exe
