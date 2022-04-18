@@ -89,6 +89,16 @@ def parse_address(df: pd.core.frame.DataFrame):
     df["區域ID"] = IDs
     return df
 
+def format_date(S: pd.core.series.Series):
+    Dates = []
+    for i in S:
+        try:
+            date = str(19110000 + int(i))
+            Dates.append(f"{date[:4]}-{date[4:6]}-{date[6:]}")
+        except:
+            Dates.append(None)
+    return Dates
+
 def process_data(path: str):
     df = pd.read_csv(path)
     # delet column name in english
@@ -106,5 +116,10 @@ def process_data(path: str):
              '主要用途', '主要建材', '建物移轉總面積平方公尺', '建物現況格局-隔間', '總價元', 
              '單價元平方公尺', '交易筆棟數', '備註', '編號', '附屬建物面積', '陽台面積', '移轉編號',
              '車位類別', '車位總價元', '車位移轉總面積(平方公尺)'], axis=1, inplace=True)
+    # 分析地址
     df = parse_address(df)
+    # 轉換Date 資料
+    df["交易年月日"] = format_date(df["交易年月日"])
+    df["建築完成年月"] = format_date(df["建築完成年月"])
+
     return df
